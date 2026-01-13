@@ -1,14 +1,14 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://switchyard.proxy.rlwy.net:48935/postgres?sslmode=require&preferQueryMode=simple
-    username: postgres
-    password: EFaCYYGvVkMPynQMhGwFtCbWTdYuJtVL
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
 
   jpa:
     hibernate:
-      ddl-auto: update  # automatically creates tables
-    show-sql: true
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}  # defaults to update
+    show-sql: ${SPRING_JPA_SHOW_SQL:true}
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
