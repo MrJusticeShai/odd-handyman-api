@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/oddhandyman
+    url: jdbc:postgresql://switchyard.proxy.rlwy.net:48935/postgres?sslmode=require&preferQueryMode=simple
     username: postgres
-    password: postgres
+    password: EFaCYYGvVkMPynQMhGwFtCbWTdYuJtVL
 
   jpa:
     hibernate:
