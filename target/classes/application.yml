@@ -1,0 +1,34 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/oddhandyman
+    username: postgres
+    password: postgres
+
+  jpa:
+    hibernate:
+      ddl-auto: update  # automatically creates tables
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+server:
+  port: 8080
+
+jwt:
+  secret: "replace-with-secure-random-secret-of-32-plus-bytes"
+  expiration-ms: 3600000
+
+logging:
+  level:
+    root: INFO
+    org.hibernate.SQL: DEBUG
+    org.springframework.web: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    com.oddhandyman: DEBUG
+
+cloudinary:
+  cloud_name: "dizghimqh"
+  api_key: "573251821361226"
+  api_secret: "XqHlsB8wpA9ga73AcxlWBI6kPxs"
