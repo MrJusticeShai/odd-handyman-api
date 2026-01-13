@@ -7,7 +7,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}  # defaults to update
+      ddl-auto: update
     show-sql: ${SPRING_JPA_SHOW_SQL:true}
     properties:
       hibernate:
@@ -15,6 +15,7 @@ spring:
 
 server:
   port: ${PORT:8080}
+  forward-headers-strategy: native
 
 jwt:
   secret: "replace-with-secure-random-secret-of-32-plus-bytes"
