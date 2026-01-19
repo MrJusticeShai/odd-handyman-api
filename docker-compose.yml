@@ -1,0 +1,32 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:latest
+    container_name: oddhandyman-postgres
+    environment:
+      POSTGRES_DB: oddhandyman
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - oddhandyman-data:/var/lib/postgresql
+    restart: unless-stopped
+
+  api:
+    build: .
+    container_name: oddhandyman-api
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/oddhandyman
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SERVER_PORT: ${SERVER_PORT}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    restart: unless-stopped
+
+volumes:
+  oddhandyman-data:

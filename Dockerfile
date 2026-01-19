@@ -9,7 +9,7 @@ RUN mvn dependency:go-offline
 # Copy source code
 COPY src ./src
 
-# Build app
+# Build the app
 RUN mvn clean package -DskipTests
 
 # Stage 2: Runtime
