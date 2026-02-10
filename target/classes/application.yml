@@ -1,34 +1,35 @@
 spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
+
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/oddhandyman
-    username: postgres
-    password: postgres
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/oddhandyman}
+    username: ${SPRING_DATASOURCE_USERNAME:oddhandyman}
+    password: ${SPRING_DATASOURCE_PASSWORD:oddhandyman}
 
   jpa:
     hibernate:
-      ddl-auto: update
-    show-sql: true
+      ddl-auto: none
+    show-sql: ${JPA_SHOW_SQL:false}
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
 server:
-  port: 8080
+  port: ${SERVER_PORT:8080}
 
 jwt:
-  secret: "replace-with-secure-random-secret-of-32-plus-bytes"
-  expiration-ms: 3600000
+  secret: ${JWT_SECRET:dev-secret-change-me}
+  expiration-ms: ${JWT_EXPIRATION_MS:3600000}
 
 logging:
   level:
-    root: INFO
-    org.hibernate.SQL: DEBUG
-    org.springframework.web: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-    com.oddhandyman: DEBUG
-
-cloudinary:
-  cloud_name: "dizghimqh"
-  api_key: "573251821361226"
-  api_secret: "XqHlsB8wpA9ga73AcxlWBI6kPxs"
+    root: ${LOG_ROOT_LEVEL:INFO}
+    org.springframework.web: ${LOG_WEB_LEVEL:INFO}
+    org.hibernate.SQL: ${LOG_SQL_LEVEL:WARN}
+    com.handyman: ${LOG_APP_LEVEL:DEBUG}

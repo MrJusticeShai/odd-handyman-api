@@ -1,4 +1,4 @@
-version: '3.9'
+# version: '3.9'
 
 services:
   db:
@@ -8,6 +8,7 @@ services:
       POSTGRES_DB: oddhandyman
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      JWT_SECRET: "N1j5Gk9vL2q8s7V0aXy4Pz6K8wQm2R3t"
     ports:
       - "5432:5432"
     volumes:
@@ -22,6 +23,8 @@ services:
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
       SERVER_PORT: ${SERVER_PORT}
+      JWT_SECRET: "N1j5Gk9vL2q8s7V0aXy4Pz6K8wQm2R3t"
+
     ports:
       - "8080:8080"
     depends_on:

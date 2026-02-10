@@ -1,0 +1,351 @@
+databaseChangeLog:
+
+  # -----------------------
+  # Table: Role
+  # -----------------------
+  - changeSet:
+      id: 1
+      author: justice
+      changes:
+        - createTable:
+            tableName: role
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+
+  # -----------------------
+  # Table: Users
+  # -----------------------
+  - changeSet:
+      id: 2
+      author: justice
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: email
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: password
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: verified
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+
+  # -----------------------
+  # Table: Tasks
+  # -----------------------
+  - changeSet:
+      id: 3
+      author: justice
+      changes:
+        - createTable:
+            tableName: tasks
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR(1000)
+              - column:
+                  name: address
+                  type: VARCHAR(255)
+              - column:
+                  name: budget
+                  type: NUMERIC(12,2)
+              - column:
+                  name: deadline
+                  type: TIMESTAMP
+
+  # -----------------------
+  # Table: Bids
+  # -----------------------
+  - changeSet:
+      id: 4
+      author: justice
+      changes:
+        - createTable:
+            tableName: bids
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: amount
+                  type: NUMERIC(12,2)
+              - column:
+                  name: task_id
+                  type: BIGINT
+              - column:
+                  name: handyman_id
+                  type: BIGINT
+              - column:
+                  name: status
+                  type: VARCHAR(20)
+                  defaultValue: PENDING
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+        - addForeignKeyConstraint:
+            baseTableName: bids
+            baseColumnNames: task_id
+            referencedTableName: tasks
+            referencedColumnNames: id
+            constraintName: fk_bids_task
+        - addForeignKeyConstraint:
+            baseTableName: bids
+            baseColumnNames: handyman_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_bids_handyman
+
+  # -----------------------
+  # Table: Chat Messages
+  # -----------------------
+  - changeSet:
+      id: 5
+      author: justice
+      changes:
+        - createTable:
+            tableName: chat_messages
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: task_id
+                  type: BIGINT
+              - column:
+                  name: sender_id
+                  type: BIGINT
+              - column:
+                  name: message
+                  type: VARCHAR(1000)
+              - column:
+                  name: timestamp
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: read_by_customer
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+              - column:
+                  name: read_by_handyman
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+        - addForeignKeyConstraint:
+            baseTableName: chat_messages
+            baseColumnNames: task_id
+            referencedTableName: tasks
+            referencedColumnNames: id
+            constraintName: fk_chat_task
+        - addForeignKeyConstraint:
+            baseTableName: chat_messages
+            baseColumnNames: sender_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_chat_sender
+
+  # -----------------------
+  # Table: Reviews
+  # -----------------------
+  - changeSet:
+      id: 6
+      author: justice
+      changes:
+        - createTable:
+            tableName: reviews
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: rating
+                  type: INT
+              - column:
+                  name: comment
+                  type: VARCHAR(2000)
+              - column:
+                  name: reviewer_id
+                  type: BIGINT
+              - column:
+                  name: reviewed_handyman_id
+                  type: BIGINT
+              - column:
+                  name: task_id
+                  type: BIGINT
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+        - addForeignKeyConstraint:
+            baseTableName: reviews
+            baseColumnNames: reviewer_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_reviews_reviewer
+        - addForeignKeyConstraint:
+            baseTableName: reviews
+            baseColumnNames: reviewed_handyman_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_reviews_handyman
+        - addForeignKeyConstraint:
+            baseTableName: reviews
+            baseColumnNames: task_id
+            referencedTableName: tasks
+            referencedColumnNames: id
+            constraintName: fk_reviews_task
+
+  # -----------------------
+  # Table: Profiles
+  # -----------------------
+  - changeSet:
+      id: 7
+      author: justice
+      changes:
+        - createTable:
+            tableName: profiles
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: verified
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+              - column:
+                  name: available
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+              - column:
+                  name: phone_number
+                  type: VARCHAR(50)
+              - column:
+                  name: location
+                  type: VARCHAR(255)
+              - column:
+                  name: rating
+                  type: NUMERIC(3,2)
+                  defaultValueNumeric: 0.0
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: profile_complete
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+              - column:
+                  name: cloudinary_folder_uuid
+                  type: VARCHAR(50)
+        - addForeignKeyConstraint:
+            baseTableName: profiles
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_profiles_user
+
+  # -----------------------
+  # Table: Profile Documents (Map)
+  # -----------------------
+  - changeSet:
+      id: 8
+      author: justice
+      changes:
+        - createTable:
+            tableName: profile_documents
+            columns:
+              - column:
+                  name: profile_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: document_type
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: url
+                  type: VARCHAR(500)
+        - addForeignKeyConstraint:
+            baseTableName: profile_documents
+            baseColumnNames: profile_id
+            referencedTableName: profiles
+            referencedColumnNames: id
+            constraintName: fk_profile_documents_profile
