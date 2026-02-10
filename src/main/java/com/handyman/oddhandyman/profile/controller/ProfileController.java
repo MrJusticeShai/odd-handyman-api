@@ -7,12 +7,14 @@ import com.handyman.oddhandyman.profile.service.ProfileService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * REST controller for managing user profiles, including updating profile information,
+ * searching handymen, and performing administrative profile actions.
+ */
 @RestController
 @RequestMapping("/api/profile")
 public class ProfileController {
@@ -25,7 +27,13 @@ public class ProfileController {
         this.userService = userService;
     }
 
-    // Update profile (skills, location, phone, availability)
+    /**
+     * Updates the authenticated user's profile.
+     *
+     * @param authentication  the current authenticated user
+     * @param updatedProfile  partial or full profile data to update
+     * @return the updated {@link Profile}
+     */
     @PatchMapping("/update")
     public Profile updateProfile(Authentication authentication, @RequestBody Profile updatedProfile) {
         User user = userService.findByEmail(authentication.getName());
@@ -39,7 +47,14 @@ public class ProfileController {
         return profileService.updateProfile(profile);
     }
 
-    // Search available handymen
+    /**
+     * Searches available handymen by optional skill, name, or email.
+     *
+     * @param skill optional skill to filter by
+     * @param name  optional name to filter by
+     * @param email optional email to filter by
+     * @return a list of matching {@link Profile} entities
+     */
     @GetMapping("/search")
     public List<Profile> searchHandymen(
             @RequestParam(required = false) String skill,
@@ -49,13 +64,24 @@ public class ProfileController {
         return profileService.searchAvailableHandymen(skill, name, email);
     }
 
-    // Get profile for authenticated user
+    /**
+     * Retrieves the profile of the authenticated user.
+     *
+     * @param authentication the current authenticated user
+     * @return the {@link Profile} of the authenticated user
+     */
     @GetMapping("/me")
     public Profile getProfile(Authentication authentication) {
         User user = userService.findByEmail(authentication.getName());
         return profileService.getProfileByUser(user);
     }
 
+    /**
+     * Retrieves all documents associated with a user's profile. Admin-only endpoint.
+     *
+     * @param userId ID of the user
+     * @return a map of document names to URLs or file paths
+     */
     @GetMapping("/admin/{userId}/documents")
     @PreAuthorize("hasRole('ADMIN')")
     public Map<String, String> getUserDocuments(@PathVariable Long userId) {
@@ -63,7 +89,13 @@ public class ProfileController {
         return profile.getDocuments();
     }
 
-
+    /**
+     * Sets the verification status of a user's profile. Admin-only endpoint.
+     *
+     * @param userId   ID of the user
+     * @param verified true to verify, false to unverify
+     * @return the updated {@link Profile}
+     */
     @PutMapping("/admin/{userId}/verify")
     @PreAuthorize("hasRole('ADMIN')")
     public Profile verifyProfile(
@@ -72,5 +104,4 @@ public class ProfileController {
     ) {
         return profileService.setVerificationStatus(userId, verified);
     }
-
 }

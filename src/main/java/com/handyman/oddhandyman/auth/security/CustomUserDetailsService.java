@@ -11,14 +11,47 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 
+/**
+ * Custom implementation of {@link UserDetailsService} for Spring Security.
+ * <p>
+ * This service loads a user from the database by email and converts it into a
+ * Spring Security {@link UserDetails} object that contains the username, password,
+ * and granted authorities (roles) for authentication and authorization.
+ */
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
-    public CustomUserDetailsService(UserRepository userRepository) { this.userRepository = userRepository; }
+
+    /**
+     * Constructor injection of {@link UserRepository}.
+     *
+     * @param userRepository repository for retrieving users from the database
+     */
+    public CustomUserDetailsService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    /**
+     * Loads a user by username (email) and converts it into a Spring Security {@link UserDetails}.
+     *
+     * Steps performed:
+     * 1. Fetch the {@link User} entity from the database by email.
+     * 2. Throw {@link UsernameNotFoundException} if the user does not exist.
+     * 3. Map the user's role to a {@link GrantedAuthority}.
+     * 4. Return a Spring Security {@link org.springframework.security.core.userdetails.User}
+     *    containing the email, encoded password, and authorities.
+     *
+     * @param username the email of the user
+     * @return a {@link UserDetails} object for authentication
+     * @throws UsernameNotFoundException if no user exists with the given email
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+        User user = userRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+
         GrantedAuthority ga = new SimpleGrantedAuthority(user.getRole().name());
+
         return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), Collections.singleton(ga));
     }
 }

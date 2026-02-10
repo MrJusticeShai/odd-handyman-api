@@ -18,6 +18,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Implementation of {@link ChatService} for handling messaging between customers and handymen.
+ */
 @Service
 public class ChatServiceImpl implements ChatService {
 
@@ -31,7 +34,15 @@ public class ChatServiceImpl implements ChatService {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Sends a new chat message for a specific task.
+     *
+     * @param req the {@link ChatMessageRequest} containing taskId and message content
+     * @param senderEmail email of the user sending the message
+     * @return the saved {@link ChatMessage} entity
+     */
     @Transactional
+    @Override
     public ChatMessage sendMessage(ChatMessageRequest req, String senderEmail) {
 
         User sender = userRepository.findByEmail(senderEmail)
@@ -56,7 +67,7 @@ public class ChatServiceImpl implements ChatService {
             message.setReadByCustomer(true);
             message.setReadByHandyman(false);
         } else {
-            // Sender is handyman or bidder
+            // Handyman sends → unread for customer
             message.setReadByCustomer(false);
             message.setReadByHandyman(true);
         }
@@ -65,13 +76,30 @@ public class ChatServiceImpl implements ChatService {
     }
 
 
+    /**
+     * Retrieves all chat messages for a given task, ordered by timestamp ascending.
+     *
+     * @param taskId the ID of the task
+     * @return list of {@link ChatMessage} for the task
+     */
+    @Override
     public List<ChatMessage> getMessagesForTask(Long taskId) {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new TaskNotFoundException("Task Not Found"));
         return chatRepository.findByTaskOrderByTimestampAsc(task);
     }
 
+    /**
+     * Marks messages as read for a specific task and user.
+     * <p>
+     * If the user is a customer, it marks all messages from the handyman as read.
+     * If the user is a handyman, it marks all messages from the customer as read.
+     *
+     * @param taskId the ID of the task
+     * @param userEmail email of the user marking messages as read
+     */
     @Transactional
+    @Override
     public void markMessagesAsRead(Long taskId, String userEmail) {
 
         User user = userRepository.findByEmail(userEmail)
@@ -95,6 +123,14 @@ public class ChatServiceImpl implements ChatService {
         chatRepository.saveAll(messages);
     }
 
+    /**
+     * Retrieves unread message counts per task for a given user.
+     *
+     * @param email email of the user
+     * @param role role of the user (CUSTOMER or HANDYMAN)
+     * @return a map of taskId to number of unread messages
+     */
+    @Override
     public Map<Long, Long> getUnreadCounts(String email, Role role) {
         Map<Long, Long> result = new HashMap<>();
 

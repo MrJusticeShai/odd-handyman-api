@@ -2,6 +2,12 @@ package com.handyman.oddhandyman.auth.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+/**
+ * Response returned after successful authentication.
+ * <p>
+ * Contains the JWT access token and its type, which should be used in the
+ * Authorization header for subsequent API requests.
+ */
 @Schema(
         description = "Response returned after successful authentication containing the access token"
 )

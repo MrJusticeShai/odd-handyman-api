@@ -17,6 +17,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Implementation of {@link ReviewService} for managing reviews of completed tasks.
+ * <p>
+ * Handles creating reviews, fetching reviews for tasks or handymen, and converting
+ * {@link Review} entities to {@link ReviewResponse} DTOs.
+ */
 @Service
 public class ReviewServiceImpl implements ReviewService {
 
@@ -30,6 +36,17 @@ public class ReviewServiceImpl implements ReviewService {
         this.userRepo = userRepo;
     }
 
+    /**
+     * Creates a new review for a completed task by the customer who requested the task.
+     *
+     * @param req       the {@link ReviewRequest} containing rating, comment, and task ID
+     * @param userEmail email of the customer submitting the review
+     * @return the created {@link Review} entity
+     * @throws UserNotFoundException            if the customer email is not found
+     * @throws TaskNotFoundException            if the task does not exist
+     * @throws UnacceptableOperationException  if the task is not completed, the task has already been reviewed,
+     *                                         or the reviewer is not the task's customer
+     */
     public Review createReview(ReviewRequest req, String userEmail) {
 
         User reviewer = userRepo.findByEmail(userEmail)
@@ -60,10 +77,22 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewRepo.save(review);
     }
 
+    /**
+     * Retrieves all reviews written about a specific handyman.
+     *
+     * @param userId ID of the handyman
+     * @return a list of {@link Review} entities for the handyman
+     */
     public List<Review> getReviewsForUser(Long userId) {
         return reviewRepo.findByReviewedHandymanId(userId);
     }
 
+    /**
+     * Converts a {@link Review} entity into a {@link ReviewResponse} DTO.
+     *
+     * @param review the review entity to convert
+     * @return a {@link ReviewResponse} containing review details
+     */
     private ReviewResponse mapToDto(Review review) {
         ReviewResponse dto = new ReviewResponse();
         dto.setId(review.getId());
@@ -76,6 +105,12 @@ public class ReviewServiceImpl implements ReviewService {
         return dto;
     }
 
+    /**
+     * Retrieves all reviews associated with a specific task.
+     *
+     * @param taskId ID of the task
+     * @return a list of {@link ReviewResponse} DTOs
+     */
     public List<ReviewResponse> getReviewsForTask(Long taskId) {
         List<Review> reviews = reviewRepo.findByTaskId(taskId);
         return reviews.stream()

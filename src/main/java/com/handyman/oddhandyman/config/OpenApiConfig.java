@@ -8,8 +8,22 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Configuration class for OpenAPI (Swagger) documentation.
+ * <p>
+ * Sets up API metadata and global security scheme for JWT authentication.
+ */
 @Configuration
 public class OpenApiConfig {
+
+    /**
+     * Configures the OpenAPI specification for the Odd Handyman application.
+     * <p>
+     * - Sets API title, version, and description.
+     * - Configures JWT bearer authentication as a global security requirement.
+     *
+     * @return the configured {@link OpenAPI} instance
+     */
     @Bean
     public OpenAPI oddHandymanApi() {
         return new OpenAPI()

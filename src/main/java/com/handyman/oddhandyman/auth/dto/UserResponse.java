@@ -1,5 +1,6 @@
 package com.handyman.oddhandyman.auth.dto;
 
+import com.handyman.oddhandyman.auth.entity.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(
@@ -25,6 +26,13 @@ public class UserResponse {
     )
     private String email;
 
+    @Schema(
+            description = "Role assigned to the user account",
+            example = "HANDYMAN",
+            allowableValues = { "CUSTOMER", "HANDYMAN", "ADMIN" }
+    )
+    private Role role;
+
     public Long getId() {
         return id;
     }
@@ -47,5 +55,13 @@ public class UserResponse {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

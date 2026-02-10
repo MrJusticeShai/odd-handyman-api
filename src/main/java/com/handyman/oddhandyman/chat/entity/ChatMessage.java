@@ -2,31 +2,45 @@ package com.handyman.oddhandyman.chat.entity;
 
 import com.handyman.oddhandyman.auth.entity.User;
 import com.handyman.oddhandyman.task.entity.Task;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+/**
+ * Entity representing a chat message exchanged between customer and handyman for a specific task.
+ */
 @Entity
 @Table(name = "chat_messages")
+@Schema(description = "Entity representing a chat message exchanged between a customer and handyman for a task")
 public class ChatMessage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "Unique identifier of the chat message", example = "1")
     private Long id;
 
     @ManyToOne
+    @Schema(description = "Task associated with this chat message")
     private Task task;
 
     @ManyToOne
+    @Schema(description = "User who sent the message")
     private User sender;
 
     @Column(length = 1000)
+    @Schema(description = "Content of the message", example = "Hello, I have completed the task.")
     private String message;
 
+    @Schema(description = "Timestamp when the message was sent")
     private LocalDateTime timestamp = LocalDateTime.now();
 
+    @Schema(description = "Indicates if the customer has read the message", example = "false")
     private boolean readByCustomer = false;
 
+    @Schema(description = "Indicates if the handyman has read the message", example = "false")
     private boolean readByHandyman = false;
+
+    // ===== Getters & Setters =====
 
     public Long getId() {
         return id;

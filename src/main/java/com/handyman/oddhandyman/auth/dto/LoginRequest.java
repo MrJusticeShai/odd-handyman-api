@@ -4,6 +4,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
+/**
+ * Data Transfer Object used to authenticate a user with email and password.
+ * <p>
+ * Sent to the login endpoint. The email must be registered, and the password
+ * is never stored or returned by the API. Validation ensures the email is
+ * properly formatted and both fields are provided.
+ */
 @Schema(
         description = "Request payload used to authenticate a user using email and password"
 )

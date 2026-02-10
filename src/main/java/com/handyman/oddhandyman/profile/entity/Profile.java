@@ -1,6 +1,7 @@
 package com.handyman.oddhandyman.profile.entity;
 
 import com.handyman.oddhandyman.auth.entity.User;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -8,42 +9,55 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Entity representing a handyman's profile in the system.
+ */
 @Entity
 public class Profile {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "Unique identifier of the profile", example = "1")
     private Long id;
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @Schema(description = "User associated with this profile")
     private User user;
 
-    private boolean verified = false; // Admin verification
+    @Schema(description = "Indicates whether the profile has been verified by an admin", example = "true")
+    private boolean verified = false;
 
-    private boolean available = false; // Appears in search
+    @Schema(description = "Indicates whether the handyman is available for tasks", example = "true")
+    private boolean available = false;
 
+    @Schema(description = "Handyman's phone number", example = "+27123456789")
     private String phoneNumber;
 
+    @Schema(description = "Handyman's location or area of service", example = "Cape Town, South Africa")
     private String location;
 
-    private Double rating = 0.0; // Overall rating
+    @Schema(description = "Overall rating of the handyman based on reviews", example = "4.5")
+    private Double rating = 0.0;
 
     @ElementCollection
+    @Schema(description = "List of skills possessed by the handyman", example = "[\"Plumbing\", \"Electrical\"]")
     private List<String> skills;
 
+    @Schema(description = "Timestamp when the profile was created")
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    // Profile completeness
+    @Schema(description = "Indicates whether the profile is complete", example = "true")
     private boolean profileComplete = false;
 
-    // Map to store document URLs by type
     @ElementCollection
     @CollectionTable(name = "profile_documents", joinColumns = @JoinColumn(name = "profile_id"))
     @MapKeyColumn(name = "document_type")
     @Column(name = "url")
+    @Schema(description = "Map of document types to their URLs")
     private Map<String, String> documents = new HashMap<>();
 
+    @Schema(description = "Cloudinary folder UUID where profile documents are stored")
     private String cloudinaryFolderUuid;
 
     @PrePersist
@@ -53,8 +67,7 @@ public class Profile {
         }
     }
 
-    // Constructors, getters, setters
-
+    // Constructors
     public Profile() {}
 
     public Profile(User user) {
@@ -62,6 +75,7 @@ public class Profile {
         this.createdAt = LocalDateTime.now();
     }
 
+    // Getters and setters
     public Long getId() {
         return id;
     }

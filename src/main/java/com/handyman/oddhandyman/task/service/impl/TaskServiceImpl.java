@@ -18,6 +18,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implementation of {@link TaskService} for managing tasks.
+ * <p>
+ * Provides operations for creating tasks, assigning handymen, completing tasks,
+ * and retrieving tasks for users (customers or handymen).
+ * Handles role-based restrictions and enforces business rules.
+ */
 @Service
 public class TaskServiceImpl implements TaskService {
 
@@ -29,6 +36,18 @@ public class TaskServiceImpl implements TaskService {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Creates a new task for a customer identified by email.
+     * <p>
+     * Only users with role CUSTOMER can create tasks.
+     * Sets initial task status to {@link TaskStatus#PENDING}.
+     *
+     * @param req           the task request payload containing title, description, address, budget, and deadline
+     * @param customerEmail the email of the customer creating the task
+     * @return the created {@link Task} entity
+     * @throws UserNotFoundException          if no user with the provided email exists
+     * @throws UnacceptableOperationException if the user is not a customer
+     */
     @Transactional
     public Task createTask(TaskRequest req, String customerEmail) {
         User customer = userRepository.findByEmail(customerEmail)
@@ -50,6 +69,15 @@ public class TaskServiceImpl implements TaskService {
         return taskRepository.save(t);
     }
 
+    /**
+     * Retrieves tasks relevant to a specific user.
+     * <p>
+     * For customers: all tasks they created.
+     * For handymen: open tasks (PENDING) and tasks assigned or completed for them.
+     *
+     * @param user the user whose tasks are being retrieved
+     * @return list of {@link TaskResponse} DTOs
+     */
     public List<TaskResponse> getTasksForUser(User user) {
         List<Task> tasks;
         if (user.getRole().name().equals("CUSTOMER")) {
@@ -66,11 +94,27 @@ public class TaskServiceImpl implements TaskService {
         return tasks.stream().map(this::mapToDto).toList();
     }
 
+    /**
+     * Retrieves a task by its unique identifier.
+     *
+     * @param id the ID of the task
+     * @return the {@link Task} entity
+     * @throws TaskNotFoundException if the task is not found
+     */
     public Task getTask(Long id) {
         return taskRepository.findById(id)
                 .orElseThrow(() -> new TaskNotFoundException("Task Not Found"));
     }
 
+    /**
+     * Assigns a handyman to a task and updates its status to {@link TaskStatus#ASSIGNED}.
+     *
+     * @param taskId     the ID of the task
+     * @param handymanId the ID of the handyman to assign
+     * @return the updated {@link Task} entity
+     * @throws TaskNotFoundException if the task does not exist
+     * @throws UserNotFoundException if the handyman does not exist
+     */
     @Transactional
     public Task assignHandyman(Long taskId, Long handymanId) {
         Task task = getTask(taskId);
@@ -81,6 +125,15 @@ public class TaskServiceImpl implements TaskService {
         return taskRepository.save(task);
     }
 
+    /**
+     * Marks a task as completed by the assigned handyman.
+     *
+     * @param taskId   the ID of the task
+     * @param handyman the handyman completing the task
+     * @return the updated {@link Task} entity
+     * @throws TaskNotFoundException          if the task does not exist
+     * @throws UnacceptableOperationException if the provided handyman is not assigned to the task
+     */
     @Transactional
     public Task completeTask(Long taskId, User handyman) {
         Task task = taskRepository.findById(taskId)
@@ -94,6 +147,12 @@ public class TaskServiceImpl implements TaskService {
         return taskRepository.save(task);
     }
 
+    /**
+     * Maps a {@link Task} entity to a {@link TaskResponse} DTO for API responses.
+     *
+     * @param task the task entity to map
+     * @return the {@link TaskResponse} containing task details and associated users
+     */
     private TaskResponse mapToDto(Task task) {
         TaskResponse dto = new TaskResponse();
         dto.setId(task.getId());

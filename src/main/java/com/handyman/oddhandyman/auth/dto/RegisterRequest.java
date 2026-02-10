@@ -5,6 +5,14 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+
+/**
+ * Data Transfer Object used to register a new user account.
+ * <p>
+ * This request payload is sent to the registration endpoint and validated
+ * for required fields. The password will be hashed before storage, and the
+ * role must correspond to one of the defined system roles.
+ */
 @Schema(
         description = "Request payload used to register a new user account"
 )
