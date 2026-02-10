@@ -1,8 +1,5 @@
 package com.handyman.oddhandyman.profile.service.impl;
 
-
-import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
 import com.handyman.oddhandyman.auth.entity.Role;
 import com.handyman.oddhandyman.auth.entity.User;
 import com.handyman.oddhandyman.exception.ProfileNotFoundException;
@@ -10,9 +7,7 @@ import com.handyman.oddhandyman.profile.entity.Profile;
 import com.handyman.oddhandyman.profile.repository.ProfileRepository;
 import com.handyman.oddhandyman.profile.service.ProfileService;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -20,11 +15,9 @@ import java.util.*;
 public class ProfileServiceImpl implements ProfileService {
 
     private final ProfileRepository profileRepository;
-    private final Cloudinary cloudinary;
 
-    public ProfileServiceImpl(ProfileRepository profileRepository, Cloudinary cloudinary) {
+    public ProfileServiceImpl(ProfileRepository profileRepository) {
         this.profileRepository = profileRepository;
-        this.cloudinary = cloudinary;
     }
 
     public Profile createProfileForUser(User user) {
@@ -69,60 +62,6 @@ public class ProfileServiceImpl implements ProfileService {
     public Profile getProfileByUser(User user) {
         return profileRepository.findByUser(user)
                 .orElseThrow(() -> new ProfileNotFoundException("Profile Not Found"));
-    }
-
-    public Profile uploadDocument(User user, MultipartFile file, String type) throws IOException {
-        // Validate type
-        if (!Set.of("identity", "criminal_clearance", "headshot").contains(type)) {
-            throw new IllegalArgumentException("Invalid document type");
-        }
-
-        // Get profile
-        Profile profile = profileRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
-
-        if (profile.getCloudinaryFolderUuid() == null) {
-            profile.setCloudinaryFolderUuid(
-                    UUID.randomUUID().toString().replace("-", "")
-            );
-            profileRepository.save(profile);
-        }
-
-        // Use UUID folder
-        String folder = "profiles/" + profile.getCloudinaryFolderUuid() + "/" + type;
-
-        // Upload
-        Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
-                ObjectUtils.asMap(
-                        "folder", folder,
-                        "resource_type", "auto"
-                ));
-
-        String url = (String) uploadResult.get("secure_url");
-
-        // Store in documents map
-        profile.getDocuments().put(type, url);
-
-        // Save and return
-        return profileRepository.save(profile);
-    }
-
-    public Map<String, String> getMyDocuments(User user) {
-        Profile profile = profileRepository.findByUser(user)
-                .orElseThrow(() -> new ProfileNotFoundException("Profile Not Found"));
-
-        return profile.getDocuments();
-    }
-
-    public String getMyDocumentByType(User user, String type) {
-        if (!List.of("identity", "criminal_clearance", "headshot").contains(type)) {
-            throw new IllegalArgumentException("Invalid document type");
-        }
-
-        Profile profile = profileRepository.findByUser(user)
-                .orElseThrow(() -> new ProfileNotFoundException("Profile Not Found"));
-
-        return profile.getDocuments().get(type);
     }
 
     public Profile getProfileByUserId(Long userId) {

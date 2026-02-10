@@ -3,8 +3,8 @@ spring:
     active: ${SPRING_PROFILES_ACTIVE:local}
 
   liquibase:
-    enabled: true
-    change-log: classpath:db/changelog/db.changelog-master.yaml
+    enabled: false
+    change-log: classpath:db/changelog/changelog-master.yaml
 
   datasource:
     driver-class-name: org.postgresql.Driver

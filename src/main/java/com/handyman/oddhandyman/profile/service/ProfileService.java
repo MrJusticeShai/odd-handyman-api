@@ -17,12 +17,6 @@ public interface ProfileService {
 
     Profile getProfileByUser(User user);
 
-    Profile uploadDocument(User user, MultipartFile file, String type) throws IOException;
-
-    Map<String, String> getMyDocuments(User user);
-
-    String getMyDocumentByType(User user, String type);
-
     Profile getProfileByUserId(Long userId);
 
     Profile setVerificationStatus(Long userId, boolean verified);

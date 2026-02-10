@@ -104,7 +104,6 @@ Negotiation happens **only while a task is PENDING**.
 * Maven
 * Docker & Docker Compose
 * OpenAPI / Swagger
-* Cloudinary (media support)
 
 ### Frontend (separate repository)
 

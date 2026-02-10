@@ -56,31 +56,6 @@ public class ProfileController {
         return profileService.getProfileByUser(user);
     }
 
-    @PostMapping("/documents")
-    public Profile uploadDocument(
-            Authentication authentication,
-            @RequestParam("file") MultipartFile file,
-            @RequestParam("type") String type
-    ) throws IOException {
-        User user = userService.findByEmail(authentication.getName());
-        return profileService.uploadDocument(user, file, type);
-    }
-
-    @GetMapping("/documents")
-    public Map<String, String> getMyDocuments(Authentication authentication) {
-        User user = userService.findByEmail(authentication.getName());
-        return profileService.getMyDocuments(user);
-    }
-
-    @GetMapping("/documents/{type}")
-    public String getMyDocumentByType(
-            Authentication authentication,
-            @PathVariable String type
-    ) {
-        User user = userService.findByEmail(authentication.getName());
-        return profileService.getMyDocumentByType(user, type);
-    }
-
     @GetMapping("/admin/{userId}/documents")
     @PreAuthorize("hasRole('ADMIN')")
     public Map<String, String> getUserDocuments(@PathVariable Long userId) {
