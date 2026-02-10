@@ -3,11 +3,29 @@ package com.handyman.oddhandyman.bid.dto;
 import com.handyman.oddhandyman.auth.entity.User;
 import com.handyman.oddhandyman.bid.entity.enums.BidStatus;
 import com.handyman.oddhandyman.task.entity.Task;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDateTime;
 
+@Schema(
+        description = "Response returned after successfully placing a bid"
+)
 public class BidResponse {
+    @Schema(
+            description = "Unique identifier of the bid",
+            example = "1"
+    )
     private Long id;
+
+    @Schema(
+            description = "The monetary amount to be bid or proposed",
+            example = "10.00"
+    )
     private Double amount;
+
+
     private Task task;
     private User handyman;
     private BidStatus status;

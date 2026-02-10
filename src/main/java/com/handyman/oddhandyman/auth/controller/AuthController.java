@@ -9,6 +9,7 @@ import com.handyman.oddhandyman.auth.service.UserService;
 import com.handyman.oddhandyman.profile.service.ProfileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name = "Authentication", description = "Endpoints for user registration, login, and authentication context")
 public class AuthController {
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
@@ -32,7 +34,9 @@ public class AuthController {
         this.profileService = profileService;
     }
 
-    @Operation(summary = "Register new user")
+    @Operation(summary = "Register new user",
+            description = "Creates a new user account and initializes an associated user profile"
+    )
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest req) {
         User u = userService.register(req);
@@ -41,7 +45,9 @@ public class AuthController {
         return ResponseEntity.ok(u);
     }
 
-    @Operation(summary = "Login user")
+    @Operation(summary = "Login user",
+            description = "Authenticates a user using email and password and returns a JWT access token"
+    )
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest req) {
         try {
@@ -55,7 +61,9 @@ public class AuthController {
         }
     }
 
-    @Operation(summary = "Get current user", security = @SecurityRequirement(name = "bearerAuth"))
+    @Operation(summary = "Get current user",
+            description = "Returns the currently authenticated user's public information",
+            security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/me")
     public ResponseEntity<?> me(Authentication authentication) {
         if (authentication == null) return ResponseEntity.status(401).build();

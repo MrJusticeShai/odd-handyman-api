@@ -1,8 +1,28 @@
 package com.handyman.oddhandyman.auth.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(
+        description = "Public user representation returned in API responses. Sensitive fields are intentionally excluded."
+)
 public class UserResponse {
+
+    @Schema(
+            description = "Unique identifier of the user",
+            example = "42"
+    )
     private Long id;
+
+    @Schema(
+            description = "Full name of the user",
+            example = "John Doe"
+    )
     private String name;
+
+    @Schema(
+            description = "Email address of the user",
+            example = "john.doe@example.com"
+    )
     private String email;
 
     public Long getId() {
@@ -29,4 +49,3 @@ public class UserResponse {
         this.email = email;
     }
 }
-
