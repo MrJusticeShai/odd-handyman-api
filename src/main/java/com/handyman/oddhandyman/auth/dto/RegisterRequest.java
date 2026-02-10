@@ -43,8 +43,8 @@ public class RegisterRequest {
     @NotNull
     @Schema(
             description = "Role assigned to the user account",
-            example = "USER",
-            allowableValues = { "USER", "HANDYMAN" }
+            example = "CUSTOMER",
+            allowableValues = { "CUSTOMER", "HANDYMAN" }
     )
     private String role;
 
