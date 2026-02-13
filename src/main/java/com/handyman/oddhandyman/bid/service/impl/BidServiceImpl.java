@@ -95,12 +95,12 @@ public class BidServiceImpl implements BidService {
      *
      * @param bidId the ID of the bid to accept
      * @return the updated {@link Bid} entity
-     * @throws TaskNotFoundException if the bid does not exist
+     * @throws BidNotFoundException if the bid does not exist
      */
     @Transactional
     public Bid acceptBid(Long bidId) {
         Bid bid = bidRepository.findById(bidId)
-                .orElseThrow(() -> new TaskNotFoundException("Bid Not Found"));
+                .orElseThrow(() -> new BidNotFoundException("Bid Not Found"));
 
         Task task = bid.getTask();
 

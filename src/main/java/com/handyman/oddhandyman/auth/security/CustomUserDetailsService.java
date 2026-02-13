@@ -33,14 +33,14 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     /**
      * Loads a user by username (email) and converts it into a Spring Security {@link UserDetails}.
-     *
+     * <p>
      * Steps performed:
-     * 1. Fetch the {@link User} entity from the database by email.
-     * 2. Throw {@link UsernameNotFoundException} if the user does not exist.
-     * 3. Map the user's role to a {@link GrantedAuthority}.
+     * 1. Fetch the {@link User} entity from the database by email. <br>
+     * 2. Throw {@link UsernameNotFoundException} if the user does not exist. <br>
+     * 3. Map the user's role to a {@link GrantedAuthority}. <br>
      * 4. Return a Spring Security {@link org.springframework.security.core.userdetails.User}
      *    containing the email, encoded password, and authorities.
-     *
+     *</p>
      * @param username the email of the user
      * @return a {@link UserDetails} object for authentication
      * @throws UsernameNotFoundException if no user exists with the given email

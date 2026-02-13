@@ -8,7 +8,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,9 +35,9 @@ public class ChatController {
     @PostMapping
     public ResponseEntity<ChatMessage> sendMessage(
             @Valid @RequestBody ChatMessageRequest req,
-            Authentication auth
+            @AuthenticationPrincipal UserDetails user
     ) {
-        return ResponseEntity.ok(chatService.sendMessage(req, auth.getName()));
+        return ResponseEntity.ok(chatService.sendMessage(req, user.getUsername()));
     }
 
     @Operation(summary = "Get all messages for a task",
@@ -51,9 +52,9 @@ public class ChatController {
     @PostMapping("/mark-read/{taskId}")
     public ResponseEntity<?> markRead(
             @PathVariable Long taskId,
-            Authentication auth
+            @AuthenticationPrincipal UserDetails user
     ) {
-        chatService.markMessagesAsRead(taskId, auth.getName());
+        chatService.markMessagesAsRead(taskId, user.getUsername());
         return ResponseEntity.ok().build();
     }
 

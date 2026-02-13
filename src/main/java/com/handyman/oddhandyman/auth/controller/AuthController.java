@@ -16,6 +16,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -65,10 +67,12 @@ public class AuthController {
             description = "Returns the currently authenticated user's public information",
             security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/me")
-    public ResponseEntity<?> me(Authentication authentication) {
-        if (authentication == null) return ResponseEntity.status(401).build();
+    public ResponseEntity<?> me(
+            @AuthenticationPrincipal UserDetails user
+    ) {
+        if (user == null) return ResponseEntity.status(401).build();
 
-        String email = authentication.getName();
+        String email = user.getUsername();
         User u = userService.findByEmail(email);
         u.setPassword(null);
         return ResponseEntity.ok(u);

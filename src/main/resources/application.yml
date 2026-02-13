@@ -2,10 +2,6 @@ spring:
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:local}
 
-  liquibase:
-    enabled: false
-    change-log: classpath:db/changelog/changelog-master.yaml
-
   datasource:
     driver-class-name: org.postgresql.Driver
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/oddhandyman}
@@ -14,7 +10,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     show-sql: ${JPA_SHOW_SQL:false}
     properties:
       hibernate:
@@ -29,7 +25,7 @@ jwt:
 
 logging:
   level:
-    root: ${LOG_ROOT_LEVEL:INFO}
-    org.springframework.web: ${LOG_WEB_LEVEL:INFO}
-    org.hibernate.SQL: ${LOG_SQL_LEVEL:WARN}
-    com.handyman: ${LOG_APP_LEVEL:DEBUG}
+    root: INFO
+    org.springframework.web: INFO
+    org.hibernate.SQL: WARN
+    com.handyman: DEBUG

@@ -7,7 +7,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,8 +34,9 @@ public class BidController {
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @PostMapping
-    public ResponseEntity<Bid> placeBid(@Valid @RequestBody BidRequest req, Authentication auth) {
-        return ResponseEntity.ok(bidService.placeBid(req, auth.getName()));
+    public ResponseEntity<Bid> placeBid(@Valid @RequestBody BidRequest req,
+                                        @AuthenticationPrincipal UserDetails user) {
+        return ResponseEntity.ok(bidService.placeBid(req, user.getUsername()));
     }
 
     @Operation(summary = "List bids for a task",

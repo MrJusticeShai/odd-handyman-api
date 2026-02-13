@@ -4,9 +4,13 @@ import com.handyman.oddhandyman.auth.entity.User;
 import com.handyman.oddhandyman.auth.service.UserService;
 import com.handyman.oddhandyman.profile.entity.Profile;
 import com.handyman.oddhandyman.profile.service.ProfileService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
@@ -35,8 +39,11 @@ public class ProfileController {
      * @return the updated {@link Profile}
      */
     @PatchMapping("/update")
-    public Profile updateProfile(Authentication authentication, @RequestBody Profile updatedProfile) {
-        User user = userService.findByEmail(authentication.getName());
+    public Profile updateProfile(
+            @AuthenticationPrincipal UserDetails authentication,
+            @RequestBody Profile updatedProfile
+    ) {
+        User user = userService.findByEmail(authentication.getUsername());
         Profile profile = profileService.getProfileByUser(user);
 
         if (updatedProfile.getSkills() != null) profile.setSkills(updatedProfile.getSkills());
@@ -71,8 +78,10 @@ public class ProfileController {
      * @return the {@link Profile} of the authenticated user
      */
     @GetMapping("/me")
-    public Profile getProfile(Authentication authentication) {
-        User user = userService.findByEmail(authentication.getName());
+    public Profile getProfile(
+            @AuthenticationPrincipal UserDetails authentication
+    ) {
+        User user = userService.findByEmail(authentication.getUsername());
         return profileService.getProfileByUser(user);
     }
 

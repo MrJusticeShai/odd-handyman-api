@@ -12,5 +12,6 @@ spring:
     user:
       name: test
       password: test
-  liquibase:
-    enabled: false   # <-- add this line to skip Liquibase in tests
+jwt:
+  secret: ${JWT_SECRET:dev-secret-change-me}
+  expiration-ms: ${JWT_EXPIRATION_MS:3600000}

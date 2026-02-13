@@ -25,24 +25,6 @@ public interface ChatRepository extends JpaRepository<ChatMessage, Long> {
     List<ChatMessage> findByTaskOrderByTimestampAsc(Task task);
 
     /**
-     * Counts unread messages sent by a handyman to the customer.
-     *
-     * @param email sender's recipient customer email
-     * @param senderRole role of the sender (should be HANDYMAN)
-     * @return number of unread messages for the customer
-     */
-    Long countByTaskCustomerEmailAndSenderRoleAndReadByCustomerFalse(String email, Role senderRole);
-
-    /**
-     * Counts unread messages sent by a customer to the handyman.
-     *
-     * @param email recipient handyman email
-     * @param senderRole role of the sender (should be CUSTOMER)
-     * @return number of unread messages for the handyman
-     */
-    Long countByTaskAssignedHandymanEmailAndSenderRoleAndReadByHandymanFalse(String email, Role senderRole);
-
-    /**
      * Retrieves unread messages sent by a handyman to the customer.
      *
      * @param email customer email

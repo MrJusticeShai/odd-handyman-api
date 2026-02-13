@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,17 +41,22 @@ public class TaskController {
             description = "Create New Task",
             security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping
-    public ResponseEntity<?> createTask(@Valid @RequestBody TaskRequest req, Authentication auth) {
-        Task t = taskService.createTask(req, auth.getName());
+    public ResponseEntity<?> createTask(
+            @Valid @RequestBody TaskRequest req,
+            @AuthenticationPrincipal UserDetails user
+    ) {
+        Task t = taskService.createTask(req, user.getUsername());
         return ResponseEntity.ok(t);
     }
 
     @Operation(summary = "List all tasks",
-            description =  "Retrieves all tasks relevant to the authenticated user.",
+            description =  "Retrieves all tasks relevant to the userenticated user.",
             security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping
-    public List<TaskResponse> getTasks(Authentication authentication) {
-        User user = userService.findByEmail(authentication.getName());
+    public List<TaskResponse> getTasks(
+            @AuthenticationPrincipal UserDetails userAuth
+    ) {
+        User user = userService.findByEmail(userAuth.getUsername());
         return taskService.getTasksForUser(user);
     }
 
@@ -57,7 +64,9 @@ public class TaskController {
             description = "Retrieves a task by its ID.",
             security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/{id}")
-    public ResponseEntity<Task> getTask(@PathVariable Long id) {
+    public ResponseEntity<Task> getTask(
+            @PathVariable Long id
+    ) {
         return ResponseEntity.ok(taskService.getTask(id));
     }
 
@@ -65,7 +74,10 @@ public class TaskController {
             description = "Assigns a handyman to a task and updates its status to ASSIGNED.",
             security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping("/{id}/assign/{handymanId}")
-    public ResponseEntity<Task> assignHandyman(@PathVariable Long id, @PathVariable Long handymanId) {
+    public ResponseEntity<Task> assignHandyman(
+            @PathVariable Long id,
+            @PathVariable Long handymanId
+    ) {
         return ResponseEntity.ok(taskService.assignHandyman(id, handymanId));
     }
 
@@ -73,10 +85,13 @@ public class TaskController {
             description = "Marks a task as completed by the assigned handyman.",
             security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping("/{id}/complete")
-    public ResponseEntity<Task> completeTask(@PathVariable Long id, Authentication authentication) {
-        if (authentication == null) return ResponseEntity.status(401).build();
+    public ResponseEntity<Task> completeTask(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails user
+    ) {
+        if (user == null) return ResponseEntity.status(401).build();
 
-        String email = authentication.getName();
+        String email = user.getUsername();
         User handyman = userService.findByEmail(email);
 
         Task completed = taskService.completeTask(id, handyman);

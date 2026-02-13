@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,8 +36,11 @@ public class ReviewController {
             description = "Allows a customer to submit a review for a handyman after the task is marked complete",
             security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping
-    public ResponseEntity<Review> create(@Valid @RequestBody ReviewRequest req, Authentication auth) {
-        return ResponseEntity.ok(reviewService.createReview(req, auth.getName()));
+    public ResponseEntity<Review> create(
+            @Valid @RequestBody ReviewRequest req,
+            @AuthenticationPrincipal UserDetails user
+    ) {
+        return ResponseEntity.ok(reviewService.createReview(req, user.getUsername()));
     }
 
     // NEW: matches frontend GET /reviews/task/{taskId}
