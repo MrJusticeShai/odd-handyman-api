@@ -20,6 +20,12 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * REST controller for managing user authentication and identity.
+ * <p>
+ * Provides endpoints for user registration (including automatic profile initialization),
+ * secure login via JWT, and retrieval of the authenticated user's context.
+ */
 @RestController
 @RequestMapping("/api/auth")
 @Tag(name = "Authentication", description = "Endpoints for user registration, login, and authentication context")

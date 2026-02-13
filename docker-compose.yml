@@ -1,19 +1,20 @@
-version: '3.9'
-
 services:
   db:
     image: postgres:latest
     container_name: oddhandyman-postgres
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: oddhandyman
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      JWT_SECRET: "${JWT_SECRET}"
+    ports:
+      - "5432:5432"
     volumes:
-      - /var/lib/oddhandyman/data:/var/lib/postgresql/data
+      - oddhandyman-data:/var/lib/postgresql   # named volume
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-      interval: 10s
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
       timeout: 5s
       retries: 5
 
@@ -21,15 +22,18 @@ services:
     build: .
     container_name: oddhandyman-api
     environment:
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
-      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
-      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/oddhandyman
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
       SERVER_PORT: ${SERVER_PORT}
-      JWT_SECRET: ${JWT_SECRET}
+      JWT_SECRET: "${JWT_SECRET}"
     ports:
-      - "80:8080"
+      - "8080:8080"
     depends_on:
       db:
         condition: service_healthy
     restart: unless-stopped
+
+# Declare all named volumes here
+volumes:
+  oddhandyman-data:
