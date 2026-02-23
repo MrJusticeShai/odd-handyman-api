@@ -1,237 +1,158 @@
-# ODD-HANDYMAN
+# 🔧 Odd-Handyman API
 
-**Connecting skilled handymen with people who need reliable work done — quickly, transparently, and locally.**
+**Connecting skilled handymen with local tasks — quickly, transparently, and securely.**
 
-Odd-Handy-Man is a lightweight service marketplace designed to bridge the gap between **unemployed or underemployed skilled workers** and **customers who need everyday tasks completed**.
-
-The platform focuses on **simplicity, trust, and clear task ownership**, avoiding unnecessary complexity while solving a real economic problem.
-
----
-
-## 🧑‍🔧 Product Overview
-
-Odd-Handy-Man enables customers to post small, practical tasks and allows nearby handymen to compete for that work through transparent bidding and direct communication.
-
-Unlike large, bloated marketplaces, Odd-Handy-Man is intentionally minimal:
-
-* One task type
-* One clear task lifecycle
-* One direct customer–handyman relationship
-
-The result is faster job completion, fewer disputes, and real income opportunities for skilled workers.
+Odd-Handyman API is a **RESTful backend service** powering a micro-marketplace.
+It bridges the gap between underemployed skilled workers and customers by providing a
+structured environment for task broadcasting, task bidding, communication, and verified
+completion.
 
 ---
 
-## 🧠 What Problem Does This App Solve?
+## 🏗 Engineering Decisions & Architecture
 
-### The Problem
+To demonstrate growth in backend engineering, this project prioritizes **maintainability, security, and data integrity** over a simple CRUD implementation.
 
-Many skilled handymen struggle to find consistent work, while customers often:
+### 1. Stateless Security with JWT
 
-* Don’t know where to find trustworthy help
-* Face unclear pricing
-* Deal with unreliable communication
+- **Decision:** Implemented Spring Security with stateless JWT (JSON Web Tokens).
+- **Why:** Allows the API to scale horizontally across multiple containers without session stickiness, enabling high availability and a modern decoupled frontend-backend architecture.
 
-At the same time, existing platforms are often:
+### 2. State Machine for Task Lifecycles
 
-* Overly complex
-* Subscription-heavy
-* Optimized for scale rather than fairness
+- **Decision:** Enforced a strict state transition: `PENDING ➔ ASSIGNED ➔ COMPLETED`.
+- **Why:** Prevents logical inconsistencies (e.g., bidding on a completed task or deleting an assigned task). Encapsulated in the Service Layer for data integrity.
 
-### The Solution
+### 3. Global Exception Handling
 
-Odd-Handy-Man provides:
-
-* A **clear task posting flow**
-* **Private bidding**
-* **Direct communication** between customer and handyman
-* A **defined task lifecycle** that reduces disputes
+- **Decision:** Implemented a `@ControllerAdvice` layer.
+- **Why:** Ensures consistent error responses (e.g., 404 for missing resources, 403 for unauthorized actions) without leaking stack traces.
 
 ---
 
-## 🎯 Goals & Impact
+## 🛠 Technology Stack
 
-Odd-Handy-Man is built with practical impact in mind:
-
-* **Reduce unemployment** by giving skilled workers access to paid tasks
-* **Lower barriers to entry** — no subscriptions or upfront fees
-* **Encourage fair negotiation** through open bidding
-* **Build trust** via private, job-linked reviews
-
-The long-term vision is to support local economies by making short-term work more accessible and reliable.
-
----
-
-## 🔁 High-Level Workflow
-
-1. A customer creates a task with a budget
-2. Handymen place bids on the task
-3. The customer negotiates or accepts a bid
-4. The task is assigned and worked on
-5. The task is completed and reviewed
-
-This single flow is the heart of the platform.
+| Layer         | Technology              | Purpose                                          |
+|---------------|-------------------------|--------------------------------------------------|
+| Backend       | Spring Boot 3.x         | Core framework and dependency injection          |
+| Database      | PostgreSQL 14           | Relational storage for task-user relationships   |
+| Security      | Spring Security + JWT   | Authentication & Role-Based Access Control (RBAC)|
+| Testing       | JUnit 5 / AssertJ       | High-coverage unit & integration tests           |
+| Documentation | Swagger / OpenAPI       | Auto-generated interactive API docs              |
+| DevOps        | Docker & Docker Compose | Local environment orchestration                  |
 
 ---
 
-## 📌 Task Lifecycle
+## 🎯 Key Features
 
-Tasks move through a small, well-defined lifecycle:
-
-* **PENDING**
-  Task is created and open for bids and negotiation
-
-* **ASSIGNED**
-  A handyman has been selected and the task is in progress
-
-* **COMPLETED**
-  Work is finished, chat is locked, and the task can be reviewed
-
-Negotiation happens **only while a task is PENDING**.
+- 🔐 **Auth:** Secure registration/login with BCrypt password hashing
+- 📋 **Tasking:** CRUD for tasks with budget, location, and status management
+- 💰 **Bidding:** Handymen submit private bids; customers can accept/reject
+- 💬 **Chat:** Contextual messaging scoped to a specific task
+- ⭐ **Reviews:** Post-completion feedback to build platform trust
 
 ---
 
-## 🏗️ Tech Stack
+## 🚀 Getting Started
 
-### Backend
+### Clone Repository
 
-* Java 17
-* Spring Boot
-* Spring Web (REST)
-* Spring Security (JWT)
-* Spring Data JPA / Hibernate
-* PostgreSQL
-* Maven
-* Docker & Docker Compose
-* OpenAPI / Swagger
-
-### Frontend (separate repository)
-
-* React (web)
-* REST API integration
-
----
-
-## 🌐 API Structure
-
-```
-/api/auth        -> registration & login
-/api/profile     -> user profiles & verification
-/api/tasks       -> task/job lifecycle
-/api/bids        -> handyman bids
-/api/chats       -> task-based chat
-/api/reviews     -> private reviews
+```bash
+git clone https://github.com/MrJusticeShai/odd-handyman-api.git
+cd odd-handyman-api
 ```
 
-Controllers are located under their respective modules, following a **feature-based package structure**.
-
----
-
-## 🗄️ Database
-
-* PostgreSQL
-* Accessed via Spring Data JPA repositories
-
-### Current State
-
-* Schema managed via JPA entities
-* `ddl-auto` configurable via `application.yml`
-
-### Production Recommendations
-
-* Introduce **Flyway** for schema migrations
-* Add indexes on:
-
-    * foreign keys (task_id, user_id)
-    * frequently queried fields
-* Enable optimistic locking where needed
-
----
-
-## 🚀 Running Locally
-
-### Using Docker Compose (Recommended)
+### 🐳 Quick Start (Docker)
 
 ```bash
 docker-compose up --build
 ```
 
-This starts:
+- **API Base URL:** http://localhost:8080
+- **Swagger UI:** http://localhost:8080/swagger-ui/index.html
 
-* Spring Boot API
-* PostgreSQL database
-
-### Without Docker
+### Manual Maven Build
 
 ```bash
+# Install dependencies and build
 mvn clean install
+
+# Run unit tests
+mvn test
+
+# Start Spring Boot app
 mvn spring-boot:run
 ```
 
-API runs at:
+---
 
-```
-http://localhost:8080
-```
+## 📖 Using Swagger UI & Authentication
 
-Swagger UI:
+### Step 1: Get Your Token
 
-```
-http://localhost:8080/swagger-ui.html
+Navigate to `/api/auth/login` with your credentials and copy the JWT token from the response body.
+
+### Step 2: Authorize Swagger UI
+
+1. Click **Authorize** (padlock icon, top-right)
+2. Enter: `Bearer <YOUR_TOKEN_HERE>`
+3. Click **Authorize**, then **Close**
+
+### Step 3: Test Endpoints
+
+All protected requests (e.g., `POST /api/tasks`) now include your JWT in headers automatically.
+
+---
+
+## 📦 API Endpoints
+
+| Endpoint      | Method                  | Description                        |
+|---------------|-------------------------|------------------------------------|
+| `/api/auth`   | `POST`                  | User registration & login          |
+| `/api/profile`| `GET` / `PUT`           | Retrieve/update user profile       |
+| `/api/tasks`  | `GET/POST/PUT/DELETE`   | Task CRUD & lifecycle management   |
+| `/api/bids`   | `GET` / `POST`          | Submit/manage handyman bids        |
+| `/api/chats`  | `GET` / `POST`          | Task-based messaging               |
+| `/api/reviews`| `GET` / `POST`          | Private post-task reviews          |
+
+### Example Task Creation (`POST /api/tasks`)
+
+```json
+{
+  "title": "Fix leaky faucet",
+  "description": "Kitchen faucet is dripping and requires replacement",
+  "budget": 50.00,
+  "location": "Midrand, Johannesburg"
+}
 ```
 
 ---
 
 ## 🧪 Testing
 
-Recommended:
+- **Unit Tests:** Service layer logic
+- **Integration Tests:** Controller & endpoint workflows
 
-* Unit tests for services
-* Integration tests for controllers
-* Testcontainers for PostgreSQL
-
----
-
-## 🔒 Security Considerations
-
-* Passwords hashed with BCrypt
-* JWT token expiration
-* Role‑based authorization
-* Job ownership validation on every request
+```bash
+# Run all tests
+mvn test
+```
 
 ---
 
-## 📈 Production‑Grade TODOs
+## 📈 Roadmap
 
-This MVP is functional but **not yet production‑ready**.
-
-Planned improvements:
-
-* [ ] Swagger / OpenAPI documentation
-* [ ] Flyway database migrations
-* [ ] Global exception handling
-* [ ] Request/response validation
-* [ ] Audit logging
-* [ ] Rate limiting
-* [ ] Observability (logs, metrics)
-* [ ] Dockerization
-* [ ] CI pipeline
+- [ ] Flyway/Liquibase database migrations
+- [ ] Redis caching for frequently accessed tasks
+- [ ] Cloud storage integration for task photos (AWS S3 / Minio)
+- [ ] GitHub Actions CI/CD for testing and linting
+- [ ] Observability: Prometheus + Grafana
+- [ ] Rate limiting & audit logging
 
 ---
 
-## 🪶 Product Philosophy
+## 🪶 Project Philosophy
 
-Odd-Handy-Man follows a *less-is-more* approach:
-
-* Fewer features
-* Clearer rules
-* Faster outcomes
-
-By avoiding payments and subscriptions in the early stages, the platform reduces friction and disputes while focusing on what matters most: **getting work done and paid fairly**.
-
----
-
-
-## 📄 License
-
-TBD
+- **Minimalist by design**
+- Single task type, one lifecycle, direct customer–handyman relationship
+- Focused on practical impact: fair work, real income, local economic support

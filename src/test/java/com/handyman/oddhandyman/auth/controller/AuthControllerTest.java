@@ -21,6 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.*;
@@ -31,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(AuthController.class)
 @AutoConfigureMockMvc(addFilters = false)
+@ActiveProfiles("test")
 class AuthControllerTest {
 
     @Autowired
@@ -192,7 +194,7 @@ class AuthControllerTest {
     class MeTests {
         @Test
         @WithMockUser(username = "test@example.com", roles = "CUSTOMER")
-        @DisplayName("Positive: Should return current user using @WithMockUser")
+        @DisplayName("Positive: Should return current user")
         void me_WithMockUser_Success() throws Exception {
             String email = "test@example.com";
 
